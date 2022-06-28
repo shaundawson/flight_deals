@@ -16,7 +16,7 @@ class DataManager:
     def get_destination_data(self):
         sheet_response = requests.get(sheety_endpoint, headers=bearer_headers)
         data = sheet_response.json()
-        print(data)
+        #print(data)
         self.destination_data = data["prices"]
         return self.destination_data
 
@@ -29,3 +29,11 @@ class DataManager:
             }
             response = requests.put(f"{sheety_endpoint}/{city['id']}", json=new_data, headers=bearer_headers)
             print(response.text)
+            
+            
+    def get_customer_emails(self):
+        customers_endpoint = f'https://api.sheety.co/{SHEET_USERNAME}/{SHEET_PROJECT}/{SHEET2_SHEETNAME}'
+        response = requests.get(url=customers_endpoint)
+        data = response.json()
+        self.customer_data = data["users"]
+        return self.customer_data
