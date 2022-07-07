@@ -17,11 +17,8 @@ HEADERS_SEARCH = {
     }
 
 class FlightSearch:
-    
-    def __init__(self):
-        self.city_codes = []
         
-    def get_iata_code(self, city_names):
+    def get_destination_code(self, city_names):
         print("get destination codes triggered")
         global HEADERS
         for city in city_names:
@@ -32,9 +29,8 @@ class FlightSearch:
             response = requests.get(url=f"{TEQUILA_KIWI_ENDPOINT}/locations/query",headers=HEADERS,params=search_params)
             results = response.json()["locations"]
             code = results[0]["code"]
-            self.city_codes.append(code)
-            
-            return self.city_codes
+            return code
+
 
 
     def check_flights(self, origin_city_code, destination_city_code, from_time, to_time):
@@ -46,20 +42,20 @@ class FlightSearch:
             "date_from": from_time.strftime("%d/%m/%Y"),
             "date_to": to_time.strftime("%d/%m/%Y"),
             "nights_in_dst_from": 3,
-            "nights_in_dst_to": 14,
+            "nights_in_dst_to": 28,
             "flight_type": "round",
             "one_for_city": 1,
-            "max_stopovers": 2,
+            "max_stopovers": 0,
             "curr": "USD"
         }
-        response = requests.get(f"{TEQUILA_KIWI_ENDPOINT}/v2/search",params=flight_search_params, headers=HEADERS_SEARCH) 
+        response = requests.get(url=f"{TEQUILA_KIWI_ENDPOINT}/v2/search",params=flight_search_params, headers=HEADERS_SEARCH) 
         
         try:
            data = response.json()["data"][0]
            
         except IndexError:
-            flight_search_params["max_stopovers"] = 1
-            response = requests.get(f"{TEQUILA_KIWI_ENDPOINT}/v2/search",params=flight_search_params, headers=HEADERS_SEARCH) 
+            flight_search_params["max_stopovers"] = 4
+            response = requests.get(url=f"{TEQUILA_KIWI_ENDPOINT}/v2/search",params=flight_search_params, headers=HEADERS_SEARCH) 
             data = response.json()["data"][0]
             pprint(data)
             flight_data = FlightData(
